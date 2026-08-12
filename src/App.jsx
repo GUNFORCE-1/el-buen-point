@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Navbar from './components/Navbar';
 import Landing from './views/Landing';
 import LoginCliente from './views/LoginCliente';
 import RegistroCliente from './views/RegistroCliente';
 import RegistroExitoso from './views/RegistroExitoso';
+import { PromocionesContext } from './context/PromocionesContext';
+import Promociones from './views/Promociones';
 
 // Vistas de reservas (Bloque 2)
 import IntroReserva from './views/IntroReserva';
@@ -17,6 +19,7 @@ import LoginAdmin from './views/LoginAdmin';
 import DashboardAdmin from './views/DashboardAdmin';
 import CalendarioAdmin from './views/CalendarioAdmin';
 import GestionReservas from './views/GestionReservas';
+import ReservasAdmin from './views/ReservasAdmin';
 
 // Mesas Mock del restaurante
 const MESAS_MOCK = [
@@ -33,8 +36,12 @@ const MESAS_MOCK = [
 ];
 
 function App() {
+  const { cart, clearCart } = useContext(PromocionesContext);
   const [screen, setScreen] = useState('landing');
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    const activeSession = localStorage.getItem('currentUser');
+    return activeSession ? JSON.parse(activeSession) : null;
+  });
   const [selectedReservaId, setSelectedReservaId] = useState(null);
 
   // Estado temporal de la reserva en curso
@@ -52,7 +59,6 @@ function App() {
   useEffect(() => {
     // 1. Inicializar usuarios si está vacío
     const storedUsers = localStorage.getItem('users');
-    let loadedUsers = [];
     
     if (!storedUsers) {
       const defaultUsers = [
@@ -71,9 +77,6 @@ function App() {
         }
       ];
       localStorage.setItem('users', JSON.stringify(defaultUsers));
-      loadedUsers = defaultUsers;
-    } else {
-      loadedUsers = JSON.parse(storedUsers);
     }
 
     // 2. Inicializar array de reservas si no existe con datos demo del figma
@@ -105,12 +108,6 @@ function App() {
       ];
       localStorage.setItem('reservas', JSON.stringify(defaultReservas));
     }
-
-    // 3. Cargar sesión activa si existe
-    const activeSession = localStorage.getItem('currentUser');
-    if (activeSession) {
-      setCurrentUser(JSON.parse(activeSession));
-    }
   }, []);
 
   const handleNavigate = (targetScreen) => {
@@ -126,7 +123,7 @@ function App() {
     
     // Si intentamos ingresar a una pantalla protegida sin haber iniciado sesión, forzamos login
     const clientFlows = ['intro-reserva', 'reserva-paso-1', 'reserva-paso-2', 'reserva-paso-3', 'reserva-exitosa'];
-    const adminFlows = ['dashboard-admin', 'calendario-admin', 'gestion-reserva-admin'];
+    const adminFlows = ['dashboard-admin', 'calendario-admin', 'gestion-reserva-admin', 'reservas-admin'];
     
     const activeUser = currentUser || JSON.parse(localStorage.getItem('currentUser'));
     
@@ -176,7 +173,8 @@ function App() {
       hora: bookingTemp.hora,
       personas: bookingTemp.personas,
       mesa: bookingTemp.mesa,
-      estado: 'confirmada'
+      estado: 'confirmada',
+      platos: cart.map(item => `${item.nombre} (x${item.cantidad})`).join(', ')
     };
 
     // Almacenar reserva en LocalStorage
@@ -187,9 +185,13 @@ function App() {
     // Guardar código en estado para mostrarlo
     setLastBookingCode(generatedCode);
 
+    // Limpiar carrito después de confirmar la reserva
+    clearCart();
+
     // Navegar a éxito
     setScreen('reserva-exitosa');
   };
+
 
   const handleUpdateReservation = (reservaId, updatedReserva) => {
     const storedReservas = JSON.parse(localStorage.getItem('reservas')) || [];
@@ -223,8 +225,17 @@ function App() {
         return <RegistroExitoso onNavigate={handleNavigate} />;
       
       // Módulo Cliente - Reservas
+      case 'promociones':
+        return (
+          <Promociones 
+            onNavigate={handleNavigate} 
+            bookingTemp={bookingTemp}
+          />
+        );
+      
       case 'intro-reserva':
         return <IntroReserva onNavigate={handleNavigate} />;
+
       
       case 'reserva-paso-1':
         return (
@@ -273,6 +284,14 @@ function App() {
 
       case 'dashboard-admin':
         return <DashboardAdmin onNavigate={handleNavigate} />;
+      
+      case 'reservas-admin':
+        return (
+          <ReservasAdmin 
+            onNavigate={handleNavigate} 
+            setSelectedReservaId={setSelectedReservaId} 
+          />
+        );
       
       case 'calendario-admin':
         return (

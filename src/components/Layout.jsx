@@ -1,4 +1,3 @@
-import React from 'react';
 import fondoBalanceado from '../assets/fondo-balanceado.jpg';
 
 const Layout = ({ children }) => {

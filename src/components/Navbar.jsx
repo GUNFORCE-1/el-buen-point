@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Navbar = ({ currentUser, onNavigate, onLogout }) => {
   const isAdmin = currentUser && currentUser.rol === 'admin';
 
@@ -19,12 +17,12 @@ const Navbar = ({ currentUser, onNavigate, onLogout }) => {
           <>
             <li className="navbar-link" onClick={() => onNavigate('dashboard-admin')}>Dashboard</li>
             <li className="navbar-link" onClick={() => onNavigate('calendario-admin')}>Calendario</li>
-            <li className="navbar-link" onClick={() => onNavigate('dashboard-admin')}>Reservas</li>
+            <li className="navbar-link" onClick={() => onNavigate('reservas-admin')}>Reservas</li>
           </>
         ) : (
           <>
             <li className="navbar-link" onClick={() => onNavigate(currentUser ? 'intro-reserva' : 'login-cliente')}>Reservas</li>
-            <li className="navbar-link" onClick={() => alert('Sección de Promociones (Solo demostrativo)')}>Promociones</li>
+            <li className="navbar-link" onClick={() => onNavigate('promociones')}>Promociones</li>
             <li className="navbar-link" onClick={() => alert('Sección Nosotros (Solo demostrativo)')}>Nosotros</li>
             <li className="navbar-link" onClick={() => alert('Sección de Contacto (Solo demostrativo)')}>Contacto</li>
           </>

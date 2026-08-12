@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Layout from '../components/Layout';
 import Button from '../components/Button';
 
@@ -13,6 +13,14 @@ const GestionReservas = ({
 
   // 1. Cargar la reserva seleccionada
   const currentReserva = storedReservations.find((res) => res.id === selectedReservaId);
+
+  // 2. Estados locales para la edición (al inicio para cumplir las reglas de Hooks)
+  const [fecha, setFecha] = useState(currentReserva ? currentReserva.fecha : '');
+  const [hora, setHora] = useState(currentReserva ? currentReserva.hora : '');
+  const [mesa, setMesa] = useState(currentReserva ? currentReserva.mesa : '');
+  const [personas, setPersonas] = useState(currentReserva ? currentReserva.personas : 2);
+  const [estado, setEstado] = useState(currentReserva ? currentReserva.estado : 'confirmada');
+  const [error, setError] = useState('');
 
   if (!currentReserva) {
     return (
@@ -31,14 +39,6 @@ const GestionReservas = ({
   // Cargar usuario de la reserva
   const cliente = storedUsers.find((u) => u.id === currentReserva.usuarioId);
   const clienteNombre = cliente ? `${cliente.nombre} ${cliente.apellidos}` : 'Cliente';
-
-  // 2. Estados locales para la edición
-  const [fecha, setFecha] = useState(currentReserva.fecha);
-  const [hora, setHora] = useState(currentReserva.hora);
-  const [mesa, setMesa] = useState(currentReserva.mesa);
-  const [personas, setPersonas] = useState(currentReserva.personas);
-  const [estado, setEstado] = useState(currentReserva.estado);
-  const [error, setError] = useState('');
 
   // Restringir a fechas futuras (hoy en adelante) para que coincida con políticas del negocio
   const getTodayDateString = () => {

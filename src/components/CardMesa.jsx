@@ -1,5 +1,3 @@
-import React from 'react';
-
 const CardMesa = ({ codigo, capacidad, estado, onClick }) => {
   const isOcupada = estado === 'ocupada';
 

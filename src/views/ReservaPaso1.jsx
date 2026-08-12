@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Layout from '../components/Layout';
 import Button from '../components/Button';
 
@@ -113,28 +113,45 @@ const ReservaPaso1 = ({ onNavigate, bookingTemp, setBookingTemp }) => {
         {/* Personas select */}
         <div className="input-container">
           <label className="input-label">Personas</label>
-          <div className="input-wrapper">
-            <span className="input-icon-left">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-            </span>
-            <select
-              value={personas}
-              onChange={(e) => setPersonas(e.target.value)}
-              className="input-field"
-              required
-            >
-              <option value="1">1 persona</option>
-              <option value="2">2 personas</option>
-              <option value="3">3 personas</option>
-              <option value="4">4 personas</option>
-              <option value="5">5 personas</option>
-              <option value="6">6 personas</option>
-            </select>
+          <div className="input-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+              <span className="input-icon-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </span>
+              <select
+                value={personas}
+                onChange={(e) => setPersonas(e.target.value)}
+                className="input-field"
+                required
+              >
+                <option value="1">1 persona</option>
+                <option value="2">2 personas</option>
+                <option value="3">3 personas</option>
+                <option value="4">4 personas</option>
+                <option value="5">5 personas</option>
+                <option value="6">6 personas</option>
+              </select>
+            </div>
+            {parseInt(personas) <= 2 && (
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', fontStyle: 'italic' }}>
+                💡 Ideal para parejas o individuales. Disponemos de acogedoras mesas para dos.
+              </p>
+            )}
+            {(parseInt(personas) === 3 || parseInt(personas) === 4) && (
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', fontStyle: 'italic' }}>
+                💡 Excelente para familias y grupos medianos.
+              </p>
+            )}
+            {parseInt(personas) >= 5 && (
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', fontStyle: 'italic' }}>
+                💡 Para grupos grandes. Recomendamos nuestras amplias mesas familiares.
+              </p>
+            )}
           </div>
         </div>
 

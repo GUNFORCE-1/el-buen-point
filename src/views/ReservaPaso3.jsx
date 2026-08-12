@@ -1,8 +1,13 @@
-import React from 'react';
+import { useState, useContext } from 'react';
 import Layout from '../components/Layout';
 import Button from '../components/Button';
+import { PromocionesContext } from '../context/PromocionesContext';
+
 
 const ReservaPaso3 = ({ onNavigate, bookingTemp, onConfirmBooking }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { cart } = useContext(PromocionesContext);
+
   
   // Format Date for nice visualization (e.g. YYYY-MM-DD to friendly Spanish)
   const formatFriendlyDate = (dateStr) => {
@@ -19,7 +24,10 @@ const ReservaPaso3 = ({ onNavigate, bookingTemp, onConfirmBooking }) => {
   };
 
   const handleConfirm = () => {
-    onConfirmBooking();
+    setIsProcessing(true);
+    setTimeout(() => {
+      onConfirmBooking();
+    }, 1200);
   };
 
   return (
@@ -57,6 +65,35 @@ const ReservaPaso3 = ({ onNavigate, bookingTemp, onConfirmBooking }) => {
           <span className="resumen-label">Personas</span>
           <span className="resumen-value">{bookingTemp.personas} {bookingTemp.personas === 1 ? 'persona' : 'personas'}</span>
         </div>
+        <div style={{ padding: '0.85rem 1rem', borderTop: '1px solid var(--border-color)' }}>
+          <div style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+            Platos
+          </div>
+          {cart && cart.length > 0 ? (
+            cart.map((item) => (
+              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                <span>
+                  {item.nombre} <span style={{ fontWeight: 700, color: 'var(--primary-color)' }}>x{item.cantidad}</span>
+                </span>
+                <span style={{ fontWeight: 700 }}>
+                  S/ {(item.precio * item.cantidad).toFixed(2)}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+              Ninguno
+            </div>
+          )}
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '0.95rem', marginTop: '0.5rem', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem', color: 'var(--primary-color)' }}>
+            <span>Total</span>
+            <span>
+              S/ {cart && cart.length > 0 
+                ? cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0).toFixed(2) 
+                : '0.00'}
+            </span>
+          </div>
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
@@ -64,6 +101,7 @@ const ReservaPaso3 = ({ onNavigate, bookingTemp, onConfirmBooking }) => {
           variant="outline" 
           onClick={() => onNavigate('reserva-paso-2')}
           style={{ flex: 1 }}
+          disabled={isProcessing}
         >
           Volver
         </Button>
@@ -71,8 +109,9 @@ const ReservaPaso3 = ({ onNavigate, bookingTemp, onConfirmBooking }) => {
           variant="primary" 
           onClick={handleConfirm}
           style={{ flex: 2 }}
+          disabled={isProcessing}
         >
-          Confirmar reserva
+          {isProcessing ? 'Procesando...' : 'Confirmar reserva'}
         </Button>
       </div>
 
